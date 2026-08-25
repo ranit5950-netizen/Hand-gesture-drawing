@@ -45,22 +45,16 @@ while True:
         break
 
     frame = cv2.flip(frame, 1)
-<<<<<<< HEAD
     h, w, c = frame.shape
 
     if canvas is None:
         canvas = np.zeros((h, w, 3), np.uint8)
-=======
-    if canvas is None:
-        canvas = np.zeros_like(frame)
->>>>>>> 5831266435fea844c06ca6bef3589d636ccd9ae5
 
     rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     result = hands.process(rgb_frame)
 
     if result.multi_hand_landmarks:
         for hand_landmarks in result.multi_hand_landmarks:
-<<<<<<< HEAD
             fingers = fingers_up(hand_landmarks)
 
             # Index fingertip position
@@ -97,55 +91,10 @@ while True:
     frame = cv2.bitwise_or(frame, canvas)
 
     cv2.imshow("Hand Gesture Drawing", frame)
-=======
-            h, w, _ = frame.shape
-            index_tip = hand_landmarks.landmark[8]
-            x, y = int(index_tip.x * w), int(index_tip.y * h)
-
-            fingers_up = []
-            tips = [4, 8, 12, 16, 20]
-            for tip in tips:
-                fingers_up.append(hand_landmarks.landmark[tip].y < hand_landmarks.landmark[tip - 2].y)
-
-            if all(fingers_up):
-                prev_x, prev_y = 0, 0
-            else:
-                dist = math.hypot(x - prev_x, y - prev_y)
-                if prev_x == 0 and prev_y == 0 or dist > min_dist:
-                    if shape_type == "flower":
-                        draw_flower(canvas, (x, y), shape_size, draw_color)
-                    else:
-                        draw_star(canvas, (x, y), shape_size, draw_color)
-                    prev_x, prev_y = x, y
-
-            mp_draw.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
-    else:
-        prev_x, prev_y = 0, 0
-
-    gray_canvas = cv2.cvtColor(canvas, cv2.COLOR_BGR2GRAY)
-    _, mask = cv2.threshold(gray_canvas, 20, 255, cv2.THRESH_BINARY)
-    mask_inv = cv2.bitwise_not(mask)
-    frame_bg = cv2.bitwise_and(frame, frame, mask=mask_inv)
-    combined = cv2.add(frame_bg, canvas)
-
-    cv2.putText(combined, f"Shape: {shape_type} (press f=flower, s=star, c=clear, q=quit)",
-                (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
-
-    cv2.imshow("Air Canvas", combined)
->>>>>>> 5831266435fea844c06ca6bef3589d636ccd9ae5
 
     key = cv2.waitKey(1) & 0xFF
     if key == ord('q'):
         break
-<<<<<<< HEAD
-=======
-    elif key == ord('c'):
-        canvas = np.zeros_like(frame)
-    elif key == ord('f'):
-        shape_type = "flower"
-    elif key == ord('s'):
-        shape_type = "star"
->>>>>>> 5831266435fea844c06ca6bef3589d636ccd9ae5
 
 cap.release()
 cv2.destroyAllWindows()
